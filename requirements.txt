@@ -10,3 +10,4 @@ locket
 six
 tblib
 psutil
+paramiko
