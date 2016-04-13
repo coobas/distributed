@@ -4,6 +4,7 @@ from time import sleep
 import socket
 import os
 import traceback
+from distutils.spawn import find_executable
 
 try:
     from queue import Queue
@@ -149,7 +150,7 @@ def async_ssh(cmd_dict):
 
 
 def start_scheduler(logdir, addr, port, ssh_username, ssh_port, ssh_private_key):
-    cmd = 'dscheduler --port {port}'.format(port=port, logdir=logdir)
+    cmd = '{exe} --port {port}'.format(exe=find_executable('dscheduler'), port=port, logdir=logdir)
 
     # Optionally re-direct stdout and stderr to a logfile
     if logdir is not None:
@@ -182,7 +183,8 @@ def start_scheduler(logdir, addr, port, ssh_username, ssh_port, ssh_private_key)
 def start_worker(logdir, scheduler_addr, scheduler_port, worker_addr, nthreads, nprocs,
                  ssh_username, ssh_port, ssh_private_key):
 
-    cmd = 'dworker {scheduler_addr}:{scheduler_port} --host {worker_addr} --nthreads {nthreads} --nprocs {nprocs}'.format(
+    cmd = '{exe} {scheduler_addr}:{scheduler_port} --host {worker_addr} --nthreads {nthreads} --nprocs {nprocs}'.format(
+        exe = find_executable('dworker'),
         scheduler_addr = scheduler_addr, scheduler_port = scheduler_port,
         worker_addr = worker_addr,
         nthreads = nthreads,

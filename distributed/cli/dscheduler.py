@@ -4,6 +4,7 @@ import logging
 import os
 import socket
 import subprocess
+import sys
 from sys import argv, exit
 from time import sleep
 
@@ -62,7 +63,8 @@ def main(center, host, port, http_port, bokeh_port, show, _bokeh):
             dirname = os.path.dirname(distributed.__file__)
             paths = [os.path.join(dirname, 'bokeh', name)
                      for name in ['status', 'tasks']]
-            args = (['bokeh', 'serve'] + paths +
+            exe = os.path.join(os.path.dirname(sys.executable), 'bokeh')
+            args = ([exe, 'serve'] + paths +
                     ['--log-level', 'warning',
                      '--check-unused-sessions=50',
                      '--unused-session-lifetime=1',
