@@ -149,8 +149,16 @@ def async_ssh(cmd_dict):
     ssh.close()
 
 
-def start_scheduler(logdir, addr, port, ssh_username, ssh_port, ssh_private_key):
-    cmd = '{exe} --port {port}'.format(exe=find_executable('dscheduler'), port=port, logdir=logdir)
+def start_scheduler(logdir, addr, port, ssh_username, ssh_port, ssh_private_key, _bokeh=True):
+    if _bokeh:
+        bokeh_param = '--bokeh'
+    else:
+        bokeh_param = '--no-bokeh'
+    cmd = '{exe} --port {port} {bokeh_param}'.format(
+        exe=find_executable('dscheduler'),
+        port=port,
+        logdir=logdir,
+        bokeh_param=bokeh_param)
 
     # Optionally re-direct stdout and stderr to a logfile
     if logdir is not None:
@@ -218,7 +226,8 @@ def start_worker(logdir, scheduler_addr, scheduler_port, worker_addr, nthreads, 
 
 class Cluster(object):
     def __init__(self, scheduler_addr, scheduler_port, worker_addrs, nthreads = 0, nprocs = 1,
-                 ssh_username = None, ssh_port = 22, ssh_private_key = None, logdir = None):
+                 ssh_username = None, ssh_port = 22, ssh_private_key = None, logdir = None,
+                 _bokeh = True):
 
         self.scheduler_addr = scheduler_addr
         self.scheduler_port = scheduler_port
@@ -240,7 +249,7 @@ class Cluster(object):
         self.threads = []
 
         # Start the scheduler node
-        self.scheduler = start_scheduler(logdir, scheduler_addr, scheduler_port, ssh_username, ssh_port, ssh_private_key)
+        self.scheduler = start_scheduler(logdir, scheduler_addr, scheduler_port, ssh_username, ssh_port, ssh_private_key, _bokeh)
 
         # Start worker nodes
         self.workers = []

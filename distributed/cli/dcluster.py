@@ -16,6 +16,8 @@ from distributed.cli.utils import check_python_3
               help="Specify scheduler node.  Defaults to first address.")
 @click.option('--scheduler-port', default=8786, type=int,
               help="Specify scheduler port number.  Defaults to port 8786.")
+@click.option('--bokeh/--no-bokeh', '_bokeh', default=True, show_default=True,
+              required=False, help="Launch Bokeh Web UI")
 @click.option('--nthreads', default=0, type=int,
               help="Number of threads per worker process. Defaults to number of cores divided by the number of proceses per host.")
 @click.option('--nprocs', default=1, type=int,
@@ -33,7 +35,7 @@ from distributed.cli.utils import check_python_3
 @click.option('--log-directory', default=None, type=click.Path(exists=True),
               help="Directory to use on all cluster nodes for the output of dscheduler and dworker commands.")
 @click.pass_context
-def main(ctx, scheduler, scheduler_port, hostnames, hostfile, nthreads, nprocs,
+def main(ctx, scheduler, scheduler_port, _bokeh, hostnames, hostfile, nthreads, nprocs,
           ssh_username, ssh_port, ssh_private_key, log_directory):
     try:
         hostnames = list(hostnames)
@@ -50,7 +52,8 @@ def main(ctx, scheduler, scheduler_port, hostnames, hostfile, nthreads, nprocs,
         exit(1)
 
     c = Cluster(scheduler, scheduler_port, hostnames, nthreads, nprocs,
-                ssh_username, ssh_port, ssh_private_key, log_directory)
+                ssh_username, ssh_port, ssh_private_key, log_directory,
+                _bokeh=_bokeh)
 
     import distributed
     print('\n---------------------------------------------------------------')
