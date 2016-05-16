@@ -513,8 +513,8 @@ class Worker(Server):
                 disk_io = psutil.disk_io_counters()
                 d['disk-read'] = disk_io.read_bytes - self._last_disk_io.read_bytes
                 d['disk-write'] = disk_io.write_bytes - self._last_disk_io.write_bytes
-            except AttributeError:
-                pass
+            except (AttributeError, RuntimeError):
+                disk_io = None
             self._last_disk_io = disk_io
         except ImportError:
             pass
